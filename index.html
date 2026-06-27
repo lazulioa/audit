@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ÉTÈ Institute — Forensic Spatial Auditor</title>
+    <!-- Include Three.js via CDN to handle your 3D canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* Force a strict, clinical, black-and-white grid structure */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #FFFFFF;
+            color: #000000;
+            font-family: "Courier New", Courier, monospace; /* Shift from artistic serif to raw data monospace */
+            display: grid;
+            grid-template-columns: 350px 1fr; /* Fixed sidebar for metrics, giant area for spatial geometry */
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Technical Sidebar for Real-time Telemetry Logs */
+        #telemetry-sidebar {
+            border-right: 1px solid #000000;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .section-title {
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1px solid #000000;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .data-stream {
+            flex-grow: 1;
+            overflow-y: auto;
+            color: #555555;
+            margin-bottom: 20px;
+        }
+
+        .stream-line {
+            margin-bottom: 6px;
+        }
+
+        /* Main Viewport for the 3D System Mapping */
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: #FAFAFA; /* Light clinical grey */
+        }
+
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            font-size: 18px;
+            color: #000000;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR: Pure technical data verification -->
+    <div id="telemetry-sidebar">
+        <div>
+            <div class="section-title">SYSTEM STATUS</div>
+            <div>NODE: ETE_EDGE_MESH_01</div>
+            <div>LATENCY TRACKING: ACTIVE</div>
+            <div>MODE: FORENSIC AUDIT (NON-ARTISTIC)</div>
+        </div>
+
+        <div>
+            <div class="section-title">INGESTED ROUTING PACKETS</div>
+            <div class="data-stream" id="log-container">
+                <!-- JavaScript will inject raw mock network telemetry lines here -->
+            </div>
+        </div>
+
+        <div>
+            <div class="section-title">COORDINATES</div>
+            <div id="coords">LAT: 50.8503 | LON: 4.3517</div>
+        </div>
+    </div>
+
+    <!-- VIEWPORT: The spatial 3D model engine area -->
+    <div id="canvas-container">
+        <!-- Technical crosshair overlay to force the look of an evaluation instrument -->
+        <div id="crosshair">+</div>
+    </div>
+
+    <script>
+        // 1. SETUP RAW MONOSPACE DATA LOG INJECTION
+        const logContainer = document.getElementById('log-container');
+        const mockIPs = ['192.168.1.45', '10.0.4.12', '172.16.254.1'];
+        
+        function appendTelemetryLine() {
+            const randomIP = mockIPs[Math.floor(Math.random() * mockIPs.length)];
+            const timeStamp = new Date().toISOString().slice(11, 19);
+            const line = document.createElement('div');
+            line.className = 'stream-line';
+            line.textContent = `[${timeStamp}] DPI_ANOMALY // INGEST_FROM: ${randomIP} // 403_REJECT`;
+            
+            logContainer.appendChild(line);
+            if (logContainer.children.length > 12) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        setInterval(appendTelemetryLine, 1500);
+
+        // 2. SETUP THE CLINICAL 3D GEOMETRY CANVAS (THREE.JS)
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xfafafa); // Clinical off-white
+
+        // Camera setup
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 1000);
+        camera.position.set(30, 20, 30);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+
+        // Replace the artistic glowing sphere with a rigid, mathematical, analytical coordinate grid
+        const gridHelper = new THREE.GridHelper(40, 40, 0x000000, 0xcccccc);
+        scene.add(gridHelper);
+
+        // Add an abstract, sharp wireframe geometry representing "packet collision coordinates"
+        const geometry = new THREE.IcosahedronGeometry(8, 1); // 1 iteration creates sharp technical triangles
+        const material = new THREE.MeshBasicMaterial({
+            color: 0x000000,
+            wireframe: true // Rigid lines, no artistic shading or textures
+        });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+
+        // Handle viewport adjustments dynamically
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        // Animation loop to slowly turn the structural data
+        function animate() {
+            requestAnimationFrame(animate);
+            mesh.rotation.y += 0.002;
+            mesh.rotation.x += 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
